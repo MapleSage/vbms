@@ -1,26 +1,7 @@
 import Link from 'next/link'
-import { Calendar, Car, FileText, TrendingUp, AlertCircle } from 'lucide-react'
+import { Calendar, Car, FileText, TrendingUp } from 'lucide-react'
 
-async function checkDatabase() {
-  try {
-    // Use relative URL in production, full URL in development
-    const baseUrl = process.env.VERCEL_URL 
-      ? `https://${process.env.VERCEL_URL}` 
-      : process.env.NEXTAUTH_URL || 'http://localhost:3000'
-    
-    const res = await fetch(`${baseUrl}/api/health`, {
-      cache: 'no-store',
-    })
-    const data = await res.json()
-    return data.database === 'connected'
-  } catch {
-    return false
-  }
-}
-
-export default async function HomePage() {
-  const isDatabaseConnected = await checkDatabase()
-
+export default function HomePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
       {/* Header */}
@@ -45,29 +26,6 @@ export default async function HomePage() {
 
       {/* Hero Section */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Database Setup Warning */}
-        {!isDatabaseConnected && (
-          <div className="bg-yellow-50 border-2 border-yellow-400 rounded-lg p-6 mb-8">
-            <div className="flex items-start gap-4">
-              <AlertCircle className="w-6 h-6 text-yellow-600 flex-shrink-0 mt-1" />
-              <div className="flex-1">
-                <h3 className="text-lg font-bold text-yellow-900 mb-2">
-                  Database Setup Required
-                </h3>
-                <p className="text-yellow-800 mb-4">
-                  The database is not connected yet. Please complete the setup to use all features.
-                </p>
-                <Link
-                  href="/setup"
-                  className="inline-block bg-yellow-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-yellow-700 transition"
-                >
-                  Complete Setup →
-                </Link>
-              </div>
-            </div>
-          </div>
-        )}
-
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold text-gray-900 mb-4">
             Van Booking & Fleet Management System
