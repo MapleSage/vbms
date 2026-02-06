@@ -3,26 +3,31 @@ import { Car, Calendar } from 'lucide-react'
 import { getBaseUrl } from '@/lib/api'
 import Header from '@/components/Header'
 
-// Revalidate every 10 seconds
-export const revalidate = 10
+// Force dynamic rendering
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 async function getVans() {
   try {
     const baseUrl = getBaseUrl()
     const url = baseUrl ? `${baseUrl}/api/vans` : '/api/vans'
     
+    console.log('[Vans Page] Fetching from:', url)
+    
     const res = await fetch(url, {
       cache: 'no-store',
     })
     
     if (!res.ok) {
-      console.error('Failed to fetch vans:', res.status, res.statusText)
+      console.error('[Vans Page] Failed to fetch vans:', res.status, res.statusText)
       return []
     }
     
-    return res.json()
+    const data = await res.json()
+    console.log('[Vans Page] Fetched vans:', data.length)
+    return data
   } catch (error) {
-    console.error('Error fetching vans:', error)
+    console.error('[Vans Page] Error fetching vans:', error)
     return []
   }
 }

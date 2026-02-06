@@ -3,26 +3,31 @@ import { Plus, Calendar, User, Car } from 'lucide-react'
 import { getBaseUrl } from '@/lib/api'
 import Header from '@/components/Header'
 
-// Revalidate every 10 seconds
-export const revalidate = 10
+// Force dynamic rendering
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 async function getBookings() {
   try {
     const baseUrl = getBaseUrl()
     const url = baseUrl ? `${baseUrl}/api/bookings` : '/api/bookings'
     
+    console.log('[Bookings Page] Fetching from:', url)
+    
     const res = await fetch(url, {
       cache: 'no-store',
     })
     
     if (!res.ok) {
-      console.error('Failed to fetch bookings:', res.status, res.statusText)
+      console.error('[Bookings Page] Failed to fetch bookings:', res.status, res.statusText)
       return []
     }
     
-    return res.json()
+    const data = await res.json()
+    console.log('[Bookings Page] Fetched bookings:', data.length)
+    return data
   } catch (error) {
-    console.error('Error fetching bookings:', error)
+    console.error('[Bookings Page] Error fetching bookings:', error)
     return []
   }
 }
