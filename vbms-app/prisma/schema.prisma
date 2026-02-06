@@ -132,10 +132,10 @@ model Cost {
   sourceId    String?  @map("source_id")
   
   // Relations
-  van         Van      @relation(fields: [vanId], references: [id], onDelete: Cascade)
-  booking     Booking? @relation(fields: [sourceId], references: [bookingId])
-  maintenance Maintenance? @relation(fields: [sourceId], references: [maintenanceId])
-  incident    Incident? @relation(fields: [sourceId], references: [incidentId])
+  van         Van      @relation(fields: [vanId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  booking     Booking? @relation(fields: [sourceId], references: [bookingId], onDelete: NoAction, onUpdate: NoAction, map: "cost_booking_fk")
+  maintenance Maintenance? @relation(fields: [sourceId], references: [maintenanceId], onDelete: NoAction, onUpdate: NoAction, map: "cost_maintenance_fk")
+  incident    Incident? @relation(fields: [sourceId], references: [incidentId], onDelete: NoAction, onUpdate: NoAction, map: "cost_incident_fk")
   
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
