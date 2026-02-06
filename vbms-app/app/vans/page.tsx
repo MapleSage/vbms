@@ -75,6 +75,17 @@ export default async function VansPage() {
 function VanCard({ van }: { van: any }) {
   return (
     <div className="bg-white rounded-lg shadow-md hover:shadow-xl transition overflow-hidden">
+      {/* Van Photo */}
+      {van.photoUrl && (
+        <div className="h-48 overflow-hidden bg-gray-100">
+          <img
+            src={van.photoUrl}
+            alt={`${van.make} ${van.model}`}
+            className="w-full h-full object-cover"
+          />
+        </div>
+      )}
+      
       <div className="p-6">
         <div className="flex justify-between items-start mb-4">
           <div className="flex items-center gap-3">

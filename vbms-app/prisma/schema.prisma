@@ -26,6 +26,7 @@ model Van {
   status        String   @default("AVAILABLE") // VanStatus: AVAILABLE, BOOKED, ACTIVE, UNAVAILABLE, INACTIVE
   configuration String?
   accessories   String?
+  photoUrl      String?  @map("photo_url") // Vercel Blob storage URL for van photo
   
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")

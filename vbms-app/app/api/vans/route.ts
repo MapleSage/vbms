@@ -78,6 +78,7 @@ export async function POST(request: Request) {
         status: body.status || 'AVAILABLE',
         configuration: body.configuration || null,
         accessories: body.accessories || null,
+        photoUrl: body.photoUrl || null,
       },
     })
 

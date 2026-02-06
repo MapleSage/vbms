@@ -1,16 +1,20 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Car, AlertCircle } from 'lucide-react'
+import { Car, AlertCircle, Upload, X } from 'lucide-react'
 import Header from '@/components/Header'
+import type { PutBlobResult } from '@vercel/blob'
 
 export default function NewVanPage() {
   const router = useRouter()
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+  const [uploadedPhoto, setUploadedPhoto] = useState<PutBlobResult | null>(null)
+  const [uploading, setUploading] = useState(false)
 
   const [formData, setFormData] = useState({
     vanId: '',
@@ -26,6 +30,7 @@ export default function NewVanPage() {
     status: 'AVAILABLE',
     configuration: '',
     accessories: '',
+    photoUrl: '',
   })
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -42,6 +47,7 @@ export default function NewVanPage() {
           year: parseInt(formData.year.toString()),
           dailyRate: parseFloat(formData.dailyRate),
           mileageRate: parseFloat(formData.mileageRate),
+          photoUrl: uploadedPhoto?.url || null,
         }),
       })
 
@@ -59,6 +65,55 @@ export default function NewVanPage() {
       setError(err.message)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) return
+
+    const file = e.target.files[0]
+    
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      setError('Please upload an image file')
+      return
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setError('Image must be less than 5MB')
+      return
+    }
+
+    setUploading(true)
+    setError('')
+
+    try {
+      const response = await fetch(
+        `/api/vans/upload?filename=${encodeURIComponent(file.name)}`,
+        {
+          method: 'POST',
+          body: file,
+        }
+      )
+
+      if (!response.ok) {
+        throw new Error('Failed to upload photo')
+      }
+
+      const blob = (await response.json()) as PutBlobResult
+      setUploadedPhoto(blob)
+    } catch (err: any) {
+      setError(err.message)
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  const removePhoto = () => {
+    setUploadedPhoto(null)
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
     }
   }
 
@@ -104,6 +159,51 @@ export default function NewVanPage() {
         )}
 
         <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-6">
+          {/* Photo Upload Section */}
+          <div className="mb-6 pb-6 border-b border-gray-200">
+            <label className="block text-sm font-medium text-gray-700 mb-3">
+              Van Photo
+            </label>
+            
+            {!uploadedPhoto ? (
+              <div className="flex items-center gap-4">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  onChange={handlePhotoUpload}
+                  className="hidden"
+                  id="photo-upload"
+                />
+                <label
+                  htmlFor="photo-upload"
+                  className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg cursor-pointer transition"
+                >
+                  <Upload className="w-5 h-5" />
+                  <span>{uploading ? 'Uploading...' : 'Upload Photo'}</span>
+                </label>
+                <span className="text-sm text-gray-500">
+                  JPG, PNG or WebP (max 5MB)
+                </span>
+              </div>
+            ) : (
+              <div className="relative inline-block">
+                <img
+                  src={uploadedPhoto.url}
+                  alt="Van preview"
+                  className="w-48 h-32 object-cover rounded-lg border-2 border-gray-200"
+                />
+                <button
+                  type="button"
+                  onClick={removePhoto}
+                  className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            )}
+          </div>
+
           <div className="grid md:grid-cols-2 gap-6">
             {/* Van ID */}
             <div>

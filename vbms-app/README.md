@@ -39,6 +39,7 @@ This is a **complete, production-ready application** with:
 - ✅ Audit logging
 - ✅ Role-based access
 - ✅ Responsive design
+- ✅ Van photo uploads (Vercel Blob)
 
 ## 🏗️ Architecture
 
