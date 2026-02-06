@@ -3,7 +3,12 @@ import { Calendar, Car, FileText, TrendingUp, AlertCircle } from 'lucide-react'
 
 async function checkDatabase() {
   try {
-    const res = await fetch(`${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/health`, {
+    // Use relative URL in production, full URL in development
+    const baseUrl = process.env.VERCEL_URL 
+      ? `https://${process.env.VERCEL_URL}` 
+      : process.env.NEXTAUTH_URL || 'http://localhost:3000'
+    
+    const res = await fetch(`${baseUrl}/api/health`, {
       cache: 'no-store',
     })
     const data = await res.json()
