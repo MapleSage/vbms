@@ -1,0 +1,461 @@
+Van Booking & Fleet Management System (VBMS)
+
+1. Background & Context
+
+The company operates a shared fleet of vans used by 8 field Project Representatives throughout the year. Today, van bookings are managed via Excel, which introduces risks around multi-user conflicts, versioning, lack of audit trail, and accountability (fines, billing, usage tracking).
+
+With Microsoft 365 already in use, the goal is to modernize this into a simple, user-friendly, SharePoint-based system while preserving Excel familiarity for analysis and reporting.
+
+This system conceptually mirrors ride‑share / airline booking architectures, but implemented using Microsoft-native, low-code services.
+
+⸻
+
+2. Objectives
+
+Primary Objectives
+	•	Provide a single source of truth for van availability and bookings
+	•	Allow multiple users to book, modify, and cancel vans concurrently without conflicts
+	•	Ensure real-time visibility of booked vs available vans
+	•	Accurately assign drivers, projects, and fines to bookings
+	•	Enable billing and utilization tracking by project, van, and user
+
+Secondary Objectives
+	•	Keep the experience simple and familiar for Excel-oriented users
+	•	Leverage Microsoft Copilot & AI for insights, not transactions
+	•	Minimize custom code by using Microsoft 365 / Azure services
+
+⸻
+
+3. Scope
+
+In Scope
+	•	Van master data management
+	•	Booking lifecycle (create / modify / cancel / complete)
+	•	Conflict detection (no double booking)
+	•	Driver and Project ID capture
+	•	Fine / incident tracking and assignment
+	•	Reporting, dashboards, and Excel-based analysis
+
+Out of Scope (Phase 1)
+	•	GPS tracking / telematics
+	•	External vendor integrations
+	•	Automated payment processing
+
+⸻
+
+4. Users & Roles
+
+4.1 Project Representatives (8 users)
+	•	Create bookings
+	•	Modify or cancel their own bookings
+	•	View availability and fleet status
+
+4.2 Fleet / Admin Users
+	•	View and manage all bookings
+	•	Manage van master data
+	•	Log fines / incidents
+	•	Override or correct bookings if required
+
+4.3 Finance / Management (Read-only)
+	•	View utilization, billing, and fines reports
+
+⸻
+
+5. Functional Requirements
+
+5.1 Van Master Management
+	•	Maintain a list of vans with:
+	•	Van ID (unique)
+	•	Registration / Plate Number
+	•	Make / Model / Type
+	•	Active / Inactive status
+	•	Tier (e.g., Standard / Premium / Heavy-duty)
+	•	Default cost rate (per day / per use)
+
+⸻
+
+5.2 Vehicle Profile (Deep Dive per Vehicle)
+
+Each vehicle must have a dedicated profile page/view that allows authorized users (Fleet/Admin) to inspect detailed information and history.
+
+Profile sections
+	•	Configuration & accessories
+	•	Accessories list (e.g., safety kit, ladder rack, tow bar, GPS unit)
+	•	Accessory status (Available / Missing / Needs replacement)
+	•	Documents (attachments)
+	•	Insurance, registration, inspection certificates
+	•	Uploads with expiry dates and reminders
+	•	Operational status
+	•	Available / Booked / Unavailable (maintenance) / Out of service
+	•	Current booking (if booked)
+	•	History
+	•	Booking history by date range
+	•	Incidents / fines history
+
+⸻
+
+5.3 Booking Management
+
+Booking Creation
+Users must provide:
+	•	Project ID (exactly 5 digits, validated)
+	•	Driver details (name, employee ID, license no., phone)
+	•	Van selection
+	•	Start date & time
+	•	End date & time
+
+System behavior:
+	•	Prevent booking if selected van is already booked for overlapping dates
+	•	Auto-generate Booking ID
+	•	Capture Created By / Created Date
+
+Booking Modification
+	•	Users may edit their own future bookings
+	•	Admins may edit any booking
+	•	All edits must be versioned and auditable
+
+Booking Cancellation
+	•	Users may cancel their own bookings
+	•	Cancellation reason is mandatory
+	•	Booking status updated to Cancelled
+
+Booking Lifecycle Statuses
+	•	Requested / Confirmed (optional)
+	•	Active
+	•	Completed
+	•	Cancelled
+
+⸻
+
+5.4 Calendar View (Color-Coded)
+
+The system must provide a calendar-style view of all vehicles with color-coded status per date/time.
+
+Core requirements
+	•	Views:
+	•	Daily / Weekly / Monthly
+	•	Filter by van tier, van type, rep, project, status
+	•	Color coding:
+	•	Available
+	•	Booked
+	•	Unavailable (Maintenance/Out of service)
+	•	Due soon (Service/Compliance) (optional overlay)
+	•	Click into a calendar item to open booking details and vehicle profile
+
+⸻
+
+5.5 Availability & Fleet Status
+	•	Real-time view of:
+	•	Available vans
+	•	Booked vans
+	•	Vans unavailable due to maintenance/incidents
+	•	Ability to view status by date range
+
+⸻
+
+5.6 Maintenance & Service Scheduling
+	•	Maintain a maintenance log with:
+	•	Service date/time
+	•	Odometer reading (optional but recommended)
+	•	Vendor / workshop
+	•	Cost
+	•	Notes + attachments (invoice, report)
+	•	Define service schedules per vehicle (or per tier/type):
+	•	By date frequency (e.g., quarterly)
+	•	By usage (e.g., every 10,000 km)
+	•	When a maintenance window is scheduled:
+	•	Vehicle must be marked Unavailable for that period
+	•	Conflicting bookings must be blocked or flagged to Admin
+
+⸻
+
+5.7 Fines & Incidents
+	•	Record fines or incidents against a van
+	•	System should:
+	•	Identify the booking active at the incident timestamp
+	•	Assign the fine to the correct driver & project
+	•	Track fine status:
+	•	Open
+	•	Assigned
+	•	Paid / Resolved
+	•	Disputed (optional)
+
+⸻
+
+5.8 Running Costs
+
+Track costs tied to a vehicle and optionally allocate to projects.
+	•	Cost types:
+	•	Fuel (optional)
+	•	Tolls / parking (optional)
+	•	Maintenance
+	•	Fines
+	•	Link costs to:
+	•	Van ID
+	•	Project ID (where applicable)
+	•	Driver (where applicable)
+
+⸻
+
+5.9 Notifications (Event-Driven)
+
+The system must support event-driven notifications via email (and optionally Teams/SMS).
+
+Events (topics) to support
+	•	BookingCreated
+	•	BookingModified
+	•	BookingCancelled
+	•	BookingStartingSoon (e.g., T-24h)
+	•	BookingOverdueReturn
+	•	VehicleMarkedUnavailable / VehicleBackInService
+	•	VehicleMaintenanceDue
+	•	ComplianceExpiring (insurance/registration/inspection)
+	•	FineLogged / FineAssigned / FineResolved
+
+Notification rules
+	•	Recipients depend on event type:
+	•	Rep who booked
+	•	Fleet/Admin group
+	•	Finance (for billing/fines rollups)
+
+⸻
+
+5.10 Reporting (Phase 1) and Billing/Invoicing (Phase 2)
+
+Phase 1 reports
+	•	Van utilization (by van / month / project)
+	•	Booked vs available summary (current & historical)
+	•	Fines by driver, van, and project
+
+Phase 2 billing & invoicing (future enhancement)
+	•	Billing page to generate invoices by Project ID and period
+	•	Configurable rate cards (per day/per hour/per tier)
+	•	Auto-email invoices and summaries to stakeholders
+	•	Export to finance systems (CSV/Excel) and/or integration
+
+⸻
+
+6. Non-Functional Requirements
+
+Usability
+	•	Simple, form-based booking (no training required)
+	•	Excel-friendly outputs for analysis
+
+Concurrency & Reliability
+	•	Multiple users must safely book simultaneously
+	•	No data loss or overwrite scenarios
+
+Audit & Compliance
+	•	Full audit trail of:
+	•	Who created/modified/cancelled a booking
+	•	When changes were made
+
+Security
+	•	Role-based access control
+	•	Users can only modify their own bookings
+
+Availability
+	•	Cloud-hosted, accessible via SharePoint / Microsoft 365
+
+⸻
+
+7. Proposed Architecture (Microsoft-Native)
+
+System of Record
+	•	SharePoint Lists
+	•	Vans
+	•	Bookings
+	•	Fines / Incidents
+
+User Interaction
+	•	Power Apps
+	•	Booking form
+	•	My Bookings
+	•	Availability view
+
+Automation
+	•	Power Automate
+	•	Status updates
+	•	Notifications (create / modify / cancel)
+	•	Fine-to-booking assignment logic
+
+Analytics & AI
+	•	Excel + Copilot
+	•	Connected to SharePoint Lists
+	•	Used for analysis, summaries, dashboards
+	•	Power BI (optional)
+
+⸻
+
+8. Why Excel Alone Is Not Used for Transactions
+	•	Excel (even with Copilot & Agent Mode) does not provide:
+	•	Transaction locking
+	•	Guaranteed conflict prevention
+	•	Reliable audit trails
+	•	Excel is positioned as an AI-powered analysis layer, not a booking engine
+
+⸻
+
+9. Success Criteria
+	•	Zero double-bookings
+	•	All users see the same real-time data
+	•	Accurate assignment of fines to drivers/projects
+	•	Management can view utilization and billing at any time
+	•	Minimal user friction compared to Excel
+
+⸻
+
+10. Calendar & Visual Planning
+
+10.1 Color-Coded Calendar View
+
+The system shall provide a calendar-style visual view of all vehicles and bookings.
+
+Calendar characteristics:
+	•	Time-based (day / week / month views)
+	•	One row per vehicle
+	•	Color-coded status:
+	•	Green – Available
+	•	Blue – Booked (future)
+	•	Orange – Active / In use
+	•	Red – Unavailable (maintenance / incident)
+	•	Grey – Inactive / retired vehicle
+
+Capabilities:
+	•	Hover / click to view booking details
+	•	Filter by:
+	•	Vehicle tier
+	•	Project ID
+	•	Driver
+	•	Status
+	•	Calendar must reflect real-time system-of-record data
+
+⸻
+
+11. Vehicle Profile, Tiering & Asset Details
+
+Each vehicle shall have a deep-dive Vehicle Profile page accessible from the calendar and booking views.
+
+11.1 Vehicle Tiering
+	•	Tier classification (e.g. Standard, Premium, Heavy-Duty, Special Use)
+	•	Allowed use cases per tier
+	•	Optional booking restrictions by tier
+
+11.2 Accessories & Configuration
+	•	List of accessories (ladder rack, tow bar, safety kit, GPS, etc.)
+	•	Accessory availability status
+	•	Notes and photos (attachments)
+
+11.3 Documentation
+	•	Insurance documents
+	•	Registration
+	•	Inspection certificates
+	•	Expiry dates with alerts
+
+⸻
+
+12. Maintenance, Service & Downtime Management
+
+12.1 Service Schedule
+	•	Service frequency (date-based and/or usage-based)
+	•	Next service due (calculated)
+	•	Maintenance provider details
+
+12.2 Maintenance Records
+	•	Maintenance history log
+	•	Cost per service
+	•	Attachments (invoices, reports)
+
+12.3 Downtime Blocking
+	•	Vehicles automatically marked Unavailable during maintenance windows
+	•	Downtime reflected in booking availability and calendar view
+
+⸻
+
+13. Running Cost & Operational Tracking
+
+Each vehicle shall track cumulative and per-period costs:
+	•	Maintenance costs
+	•	Fines / penalties
+	•	Optional fuel or toll costs
+
+Costs must be attributable to:
+	•	Vehicle
+	•	Driver
+	•	Project ID
+	•	Time period
+
+⸻
+
+14. Event-Driven Notifications & Alerts
+
+The system shall use an event-driven notification model (conceptually similar to AWS SNS topics).
+
+14.1 Booking Events
+	•	BookingCreated
+	•	BookingModified
+	•	BookingCancelled
+	•	BookingStartingSoon (e.g. 24 hours prior)
+	•	BookingOverdueReturn
+
+14.2 Vehicle & Compliance Events
+	•	VehicleMaintenanceDue
+	•	VehicleMarkedUnavailable / Available
+	•	InsuranceExpiring
+	•	RegistrationExpiring
+
+14.3 Fine & Incident Events
+	•	FineLogged
+	•	FineAssignedToDriver
+	•	FineResolved
+
+14.4 Notification Channels
+	•	Email (Outlook)
+	•	Microsoft Teams
+	•	SMS (via approved connector)
+
+Notification routing must be configurable by role (Rep, Fleet Admin, Finance).
+
+⸻
+
+15. Billing & Invoicing (Future Phase)
+
+15.1 Billing Rules
+	•	Rate per vehicle / tier
+	•	Duration-based billing
+	•	Fine passthrough to project
+
+15.2 Invoicing
+	•	Generate invoices by project
+	•	Email invoices automatically
+	•	Export to finance systems
+
+⸻
+
+16. Integration & Future Platform Options
+
+16.1 CRM / HubSpot (Future)
+	•	Vehicle, Booking, and Project objects can later be mapped to HubSpot Custom Objects
+	•	Workflows can extend notifications, approvals, and billing
+	•	Similar architecture to existing internal applications (e.g., recruitment platform)
+
+16.2 Cloud-Native Extensions
+	•	Azure Event Grid / Service Bus for high-volume events
+	•	External integrations via webhooks
+
+⸻
+
+17. Success Criteria (Expanded)
+	•	Zero double bookings
+	•	Accurate vehicle availability at all times
+	•	Complete vehicle lifecycle visibility
+	•	Automated notifications for all critical events
+	•	Clear cost and accountability trail per project and driver
+
+⸻
+
+18. Long-Term Enhancements
+	•	Advanced AI forecasting (demand, maintenance)
+	•	Mobile-first booking experience
+	•	External contractor access
+	•	Telematics integration

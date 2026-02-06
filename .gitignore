@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+vbms-app/node_modules/
+
+# Next.js
+vbms-app/.next/
+vbms-app/out/
+
+# Production
+vbms-app/build/
+
+# Misc
+.DS_Store
+*.pem
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local env files
+vbms-app/.env
+vbms-app/.env*.local
+
+# Vercel
+.vercel
+
+# Database
+vbms-app/prisma/dev.db
+vbms-app/prisma/dev.db-journal
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Excel files
+*.xlsm
+*.xlsx
+
+# Documentation (keep in repo but ignore if needed)
+# docs/
+# flows/
+# scripts/

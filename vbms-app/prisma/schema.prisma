@@ -1,0 +1,198 @@
+// Prisma schema for Van Booking & Fleet Management System
+// Database: Azure SQL Database (or PostgreSQL for development)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"  // Use SQLite for local development
+  url      = env("DATABASE_URL")
+}
+
+// Van Master - Central registry of all fleet vehicles
+model Van {
+  id            String   @id @default(cuid())
+  vanId         String   @unique @map("van_id")
+  registration  String   @unique
+  make          String
+  model         String
+  year          Int
+  vin           String?
+  tier          String   // VanTier: STANDARD, PREMIUM, SPECIALIZED
+  type          String   // VanType: CARGO, PASSENGER, REFRIGERATED
+  dailyRate     Decimal  @map("daily_rate")
+  mileageRate   Decimal  @map("mileage_rate")
+  status        String   @default("AVAILABLE") // VanStatus: AVAILABLE, BOOKED, ACTIVE, UNAVAILABLE, INACTIVE
+  configuration String?
+  accessories   String?
+  
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  bookings      Booking[]
+  maintenance   Maintenance[]
+  incidents     Incident[]
+  costs         Cost[]
+  documents     Document[]
+  
+  @@map("vans")
+}
+
+// Bookings - Van reservation records
+model Booking {
+  id            String   @id @default(cuid())
+  bookingId     String   @unique @map("booking_id")
+  projectId     String   @map("project_id")
+  vanId         String   @map("van_id")
+  driverName    String   @map("driver_name")
+  driverContact String   @map("driver_contact")
+  startDateTime DateTime @map("start_date_time")
+  endDateTime   DateTime @map("end_date_time")
+  status        String   @default("REQUESTED") // BookingStatus: REQUESTED, CONFIRMED, ACTIVE, COMPLETED, CANCELLED
+  
+  createdBy     String   @map("created_by")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  van           Van      @relation(fields: [vanId], references: [id], onDelete: Cascade)
+  costs         Cost[]
+  
+  @@index([vanId])
+  @@index([projectId])
+  @@index([startDateTime])
+  @@index([endDateTime])
+  @@index([status])
+  @@map("bookings")
+}
+
+// Maintenance - Vehicle service records
+model Maintenance {
+  id              String   @id @default(cuid())
+  maintenanceId   String   @unique @map("maintenance_id")
+  vanId           String   @map("van_id")
+  scheduledDate   DateTime @map("scheduled_date")
+  completedDate   DateTime? @map("completed_date")
+  description     String
+  cost            Decimal?
+  vendor          String?
+  maintenanceType String   @map("maintenance_type") // MaintenanceType: DATE_BASED, USAGE_BASED
+  
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  van             Van      @relation(fields: [vanId], references: [id], onDelete: Cascade)
+  costs           Cost[]
+  
+  @@index([vanId])
+  @@index([scheduledDate])
+  @@map("maintenance")
+}
+
+// Incidents - Fines and incident records
+model Incident {
+  id               String   @id @default(cuid())
+  incidentId       String   @unique @map("incident_id")
+  vanId            String   @map("van_id")
+  incidentDateTime DateTime @map("incident_date_time")
+  incidentType     String   @map("incident_type") // IncidentType: FINE, ACCIDENT, DAMAGE, OTHER
+  description      String
+  amount           Decimal?
+  assignedDriver   String?  @map("assigned_driver")
+  assignedProjectId String? @map("assigned_project_id")
+  status           String   @default("OPEN") // IncidentStatus: OPEN, ASSIGNED, PAID, RESOLVED, DISPUTED
+  
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  van              Van      @relation(fields: [vanId], references: [id], onDelete: Cascade)
+  costs            Cost[]
+  
+  @@index([vanId])
+  @@index([incidentDateTime])
+  @@index([status])
+  @@map("incidents")
+}
+
+// Costs - Running costs tracking
+model Cost {
+  id          String   @id @default(cuid())
+  costId      String   @unique @map("cost_id")
+  vanId       String   @map("van_id")
+  projectId   String   @map("project_id")
+  driver      String?
+  costType    String   @map("cost_type") // CostType: FUEL, TOLLS, MAINTENANCE, FINE
+  amount      Decimal
+  date        DateTime
+  description String?
+  sourceId    String?  @map("source_id")
+  
+  // Relations
+  van         Van      @relation(fields: [vanId], references: [id], onDelete: Cascade)
+  booking     Booking? @relation(fields: [sourceId], references: [bookingId])
+  maintenance Maintenance? @relation(fields: [sourceId], references: [maintenanceId])
+  incident    Incident? @relation(fields: [sourceId], references: [incidentId])
+  
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  
+  @@index([vanId])
+  @@index([projectId])
+  @@index([date])
+  @@map("costs")
+}
+
+// Documents - Vehicle compliance documents
+model Document {
+  id           String   @id @default(cuid())
+  vanId        String   @map("van_id")
+  documentType String   @map("document_type") // DocumentType: INSURANCE, REGISTRATION, INSPECTION
+  expiryDate   DateTime @map("expiry_date")
+  fileUrl      String   @map("file_url")
+  fileName     String   @map("file_name")
+  
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  van          Van      @relation(fields: [vanId], references: [id], onDelete: Cascade)
+  
+  @@index([vanId])
+  @@index([expiryDate])
+  @@map("documents")
+}
+
+// Audit Trail - System audit log
+model AuditTrail {
+  id            String   @id @default(cuid())
+  entityType    String   @map("entity_type") // EntityType: VAN, BOOKING, MAINTENANCE, INCIDENT, COST
+  entityId      String   @map("entity_id")
+  action        String   // AuditAction: CREATE, UPDATE, DELETE, STATUS_CHANGE
+  user          String
+  timestamp     DateTime @default(now())
+  changedFields String?  @map("changed_fields")
+  oldValues     String?  @map("old_values")
+  newValues     String?  @map("new_values")
+  
+  @@index([entityType])
+  @@index([entityId])
+  @@index([timestamp])
+  @@map("audit_trail")
+}
+
+// Users - Application users (synced from Azure AD)
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  role      String   @default("PROJECT_REP") // UserRole: PROJECT_REP, FLEET_ADMIN, FINANCE_MANAGER
+  
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  @@map("users")
+}
