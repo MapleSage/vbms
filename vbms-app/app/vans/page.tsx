@@ -3,6 +3,9 @@ import { Car, Calendar } from 'lucide-react'
 import { getBaseUrl } from '@/lib/api'
 import Header from '@/components/Header'
 
+// Revalidate every 10 seconds
+export const revalidate = 10
+
 async function getVans() {
   const res = await fetch(`${getBaseUrl()}/api/vans`, {
     cache: 'no-store',
