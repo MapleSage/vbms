@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { Plus, Calendar, User, Car } from 'lucide-react'
 import { getBaseUrl } from '@/lib/api'
+import Header from '@/components/Header'
 
 async function getBookings() {
   const res = await fetch(`${getBaseUrl()}/api/bookings`, {
@@ -15,27 +16,7 @@ export default async function BookingsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-between items-center">
-            <Link href="/" className="text-2xl font-bold text-gray-900">
-              VBMS
-            </Link>
-            <nav className="flex gap-4">
-              <Link href="/bookings" className="text-blue-600 font-semibold">
-                Bookings
-              </Link>
-              <Link href="/vans" className="text-gray-600 hover:text-gray-900">
-                Vans
-              </Link>
-              <Link href="/calendar" className="text-gray-600 hover:text-gray-900">
-                Calendar
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
+      <Header currentPage="bookings" />
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

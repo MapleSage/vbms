@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { Car, Calendar, DollarSign, Wrench, AlertCircle } from 'lucide-react'
 import { notFound } from 'next/navigation'
 import { getBaseUrl } from '@/lib/api'
+import Header from '@/components/Header'
 
 async function getVan(id: string) {
   try {
@@ -25,26 +26,7 @@ export default async function VanDetailsPage({ params }: { params: { id: string 
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-between items-center">
-            <Link href="/" className="text-2xl font-bold text-gray-900">
-              VBMS
-            </Link>
-            <nav className="flex gap-4">
-              <Link href="/bookings" className="text-gray-600 hover:text-gray-900">
-                Bookings
-              </Link>
-              <Link href="/vans" className="text-blue-600 font-semibold">
-                Vans
-              </Link>
-              <Link href="/calendar" className="text-gray-600 hover:text-gray-900">
-                Calendar
-              </Link>
-            </nav>
-          </div>
-        </div>
-      </header>
+      <Header showBackButton backHref="/vans" currentPage="vans" />
 
       <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">

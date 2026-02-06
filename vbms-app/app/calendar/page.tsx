@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, ArrowLeft } from 'lucide-react'
+import Image from 'next/image'
 
 interface Booking {
   id: string
@@ -87,8 +88,17 @@ export default function CalendarPage() {
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
-            <Link href="/" className="text-2xl font-bold text-gray-900">
-              VBMS
+            <Link href="/" className="flex items-center gap-3">
+              <Image
+                src="/images/swire-sticky-logo-1.png"
+                alt="Swire"
+                width={120}
+                height={40}
+                className="h-10 w-auto"
+              />
+              <span className="text-xl font-bold text-gray-900 border-l pl-3 border-gray-300">
+                VBMS
+              </span>
             </Link>
             <nav className="flex gap-4">
               <Link href="/bookings" className="text-gray-600 hover:text-gray-900">

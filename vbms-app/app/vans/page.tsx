@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { Car, Calendar } from 'lucide-react'
 import { getBaseUrl } from '@/lib/api'
+import Header from '@/components/Header'
 
 async function getVans() {
   const res = await fetch(`${getBaseUrl()}/api/vans`, {
@@ -15,19 +16,7 @@ export default async function VansPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-between items-center">
-            <Link href="/" className="text-2xl font-bold text-gray-900">
-              VBMS
-            </Link>
-            <nav className="flex gap-4">
-              <Link href="/bookings" className="text-gray-600 hover:text-gray-900">
-                Bookings
-              </Link>
-              <Link href="/vans" className="text-blue-600 font-semibold">
-                Vans
+      <Header currentPage="vans" />
               </Link>
               <Link href="/calendar" className="text-gray-600 hover:text-gray-900">
                 Calendar
