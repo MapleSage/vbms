@@ -1,31 +1,59 @@
-# Fix Vercel Deployment - Database Setup
+# Fix Vercel Deployment - Azure SQL Database Setup
 
 ## Issue
 
-Your app is deployed but showing errors because the database isn't set up yet.
+Your app is deployed to Vercel but showing errors because the Azure SQL Database isn't connected yet.
 
-## Quick Fix (5 minutes)
+## Architecture
 
-### Step 1: Create PostgreSQL Database in Vercel
+- **Hosting**: Vercel (Next.js app)
+- **Database**: Azure SQL Database
+- **Connection**: Via DATABASE_URL environment variable
+
+## Quick Fix (10 minutes)
+
+### Step 1: Create Azure SQL Database
+
+1. Go to https://portal.azure.com
+2. Create a new SQL Database:
+   - **Database name**: `vbms-db`
+   - **Server**: Create new (e.g., `vbms-server`)
+   - **Pricing tier**: Basic (cheapest) or Standard S0
+3. Configure firewall:
+   - Enable "Allow Azure services and resources to access this server"
+4. Copy the connection string from "Connection strings" section
+
+### Step 2: Format Connection String for Prisma
+
+Convert Azure's connection string to Prisma format:
+
+```
+sqlserver://YOUR-SERVER.database.windows.net:1433;database=vbms-db;user=YOUR-USERNAME;password=YOUR-PASSWORD;encrypt=true;trustServerCertificate=false;loginTimeout=30
+```
+
+Replace:
+- `YOUR-SERVER` with your server name
+- `YOUR-USERNAME` with your admin username
+- `YOUR-PASSWORD` with your password
+
+### Step 3: Add to Vercel Environment Variables
 
 1. Go to https://vercel.com/dashboard
 2. Select your project (vbs-ebon)
-3. Click "Storage" tab
-4. Click "Create Database"
-5. Select "Postgres"
-6. Name it: `vbms-db`
-7. Select region (closest to you)
-8. Click "Create"
+3. Go to Settings → Environment Variables
+4. Add new variable:
+   - **Name**: `DATABASE_URL`
+   - **Value**: Your formatted connection string
+   - **Environments**: Production, Preview, Development
+5. Click "Save"
 
-Vercel will automatically add `DATABASE_URL` to your environment variables.
-
-### Step 2: Run Database Migrations
+### Step 4: Run Database Migrations
 
 In your local terminal:
 
 ```bash
-# Pull the production environment variables
-vercel env pull .env.production
+# Set your Azure SQL connection string
+export DATABASE_URL="your-azure-sql-connection-string"
 
 # Run migrations to create tables
 npx prisma db push
@@ -34,7 +62,7 @@ npx prisma db push
 npx prisma db seed
 ```
 
-### Step 3: Redeploy
+### Step 5: Redeploy Vercel
 
 Push your latest changes:
 
@@ -47,7 +75,7 @@ Or manually redeploy in Vercel dashboard:
 2. Click "..." on latest deployment
 3. Click "Redeploy"
 
-### Step 4: Verify
+### Step 6: Verify
 
 Visit your app: https://vbs-ebon.vercel.app
 

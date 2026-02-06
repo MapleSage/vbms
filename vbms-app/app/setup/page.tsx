@@ -78,31 +78,36 @@ export default async function SetupPage() {
 
             <div className="space-y-6">
               <div>
-                <h3 className="font-semibold text-gray-900 mb-2">Step 1: Create PostgreSQL Database</h3>
+                <h3 className="font-semibold text-gray-900 mb-2">Step 1: Create Azure SQL Database</h3>
                 <ol className="list-decimal list-inside space-y-2 text-gray-700 ml-4">
-                  <li>Go to your Vercel project dashboard</li>
-                  <li>Click on the "Storage" tab</li>
-                  <li>Click "Create Database"</li>
-                  <li>Select "Postgres"</li>
-                  <li>Choose a name (e.g., vbms-db)</li>
-                  <li>Select your preferred region</li>
-                  <li>Click "Create"</li>
+                  <li>Go to Azure Portal (portal.azure.com)</li>
+                  <li>Create a new SQL Database</li>
+                  <li>Configure server and database settings</li>
+                  <li>Enable "Allow Azure services" in firewall</li>
+                  <li>Copy the connection string</li>
                 </ol>
               </div>
 
               <div>
-                <h3 className="font-semibold text-gray-900 mb-2">Step 2: Connect Database</h3>
+                <h3 className="font-semibold text-gray-900 mb-2">Step 2: Add to Vercel</h3>
                 <p className="text-gray-700 mb-2">
-                  Vercel will automatically add the <code className="bg-gray-100 px-2 py-1 rounded">DATABASE_URL</code> environment variable to your project.
+                  Add your Azure SQL connection string to Vercel:
                 </p>
+                <ol className="list-decimal list-inside space-y-2 text-gray-700 ml-4">
+                  <li>Go to Vercel Dashboard → Your Project</li>
+                  <li>Settings → Environment Variables</li>
+                  <li>Add <code className="bg-gray-100 px-2 py-1 rounded">DATABASE_URL</code></li>
+                  <li>Paste your Azure SQL connection string</li>
+                  <li>Save and redeploy</li>
+                </ol>
               </div>
 
               <div>
                 <h3 className="font-semibold text-gray-900 mb-2">Step 3: Run Migrations</h3>
                 <p className="text-gray-700 mb-2">In your local terminal:</p>
                 <div className="bg-gray-900 text-gray-100 p-4 rounded-lg font-mono text-sm">
-                  <div># Pull environment variables</div>
-                  <div>vercel env pull .env.production</div>
+                  <div># Set your Azure SQL connection string</div>
+                  <div>export DATABASE_URL="your-azure-sql-connection-string"</div>
                   <div className="mt-2"># Run migrations</div>
                   <div>npx prisma db push</div>
                   <div className="mt-2"># Seed database (optional)</div>
@@ -113,15 +118,15 @@ export default async function SetupPage() {
               <div>
                 <h3 className="font-semibold text-gray-900 mb-2">Step 4: Redeploy</h3>
                 <p className="text-gray-700">
-                  After running migrations, redeploy your application or wait for automatic redeployment.
+                  Push to GitHub or manually redeploy in Vercel dashboard.
                 </p>
               </div>
 
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-6">
-                <h4 className="font-semibold text-blue-900 mb-2">Need Help?</h4>
+                <h4 className="font-semibold text-blue-900 mb-2">Detailed Guide</h4>
                 <p className="text-sm text-blue-800">
-                  Check the detailed deployment guide in the repository:
-                  <code className="bg-blue-100 px-2 py-1 rounded ml-1">DEPLOY-VERCEL.md</code>
+                  Check the complete Azure SQL setup guide:
+                  <code className="bg-blue-100 px-2 py-1 rounded ml-1">AZURE-SQL-SETUP.md</code>
                 </p>
               </div>
             </div>
