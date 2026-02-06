@@ -86,6 +86,9 @@ export default function NewBookingPage() {
               </span>
             </Link>
             <nav className="flex gap-4">
+              <Link href="/" className="text-gray-600 hover:text-gray-900">
+                Home
+              </Link>
               <Link href="/bookings" className="text-blue-600 font-semibold">
                 Bookings
               </Link>

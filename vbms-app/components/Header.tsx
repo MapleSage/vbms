@@ -38,6 +38,16 @@ export default function Header({ showBackButton = false, backHref = '/', current
           </div>
           <nav className="flex gap-4">
             <Link
+              href="/"
+              className={`${
+                currentPage === 'home'
+                  ? 'text-blue-600 font-semibold'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Home
+            </Link>
+            <Link
               href="/bookings"
               className={`${
                 currentPage === 'bookings'

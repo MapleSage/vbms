@@ -20,9 +20,18 @@ export default async function VansPage() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Fleet Management</h1>
-          <p className="text-gray-600 mt-1">View and manage all vans</p>
+        <div className="flex justify-between items-center mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Fleet Management</h1>
+            <p className="text-gray-600 mt-1">View and manage all vans</p>
+          </div>
+          <Link
+            href="/vans/new"
+            className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition flex items-center gap-2"
+          >
+            <Car className="w-5 h-5" />
+            Add Van
+          </Link>
         </div>
 
         {/* Stats */}

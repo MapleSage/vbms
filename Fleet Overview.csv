@@ -1,0 +1,32 @@
+FLEET OVERVIEW,Unnamed: 1,Unnamed: 2,Unnamed: 3,Unnamed: 4,Unnamed: 5,Unnamed: 6,Unnamed: 7,Unnamed: 8,Unnamed: 9
+Live status snapshot (based on Booking Log and maintenance blocks).,,,,,,,,,
+Van ID,Type,License Plate,Booked for,Booked by,Driver,Status,Next Available,,
+5,Caddy,DT18061,18555,CC,Martin Frederiksen,,,,Total Vans
+6,Caddy,DT18062,19334,,Nicolas Bretz Vestas DE 19334,,,,Available
+7,Caddy,DT18063,18633,Magdalena ,"Boderne (Aivaras, Majda + K. Barys)",,,,Unavailable
+22,Transporter DK,DN87171,18633,Magdalena ,Nightshift,,,,Maintenance
+23,Transporter DK,DN22056,18633,Magdalena ,"Martin Raunholt, Giancarlo and Ioan",,,,Reserved
+28,Caddy,DD53351,xxx,Ada ,?,,,,
+30,Caddy,DD53352,18393,Niina,Daniel Bull Jenses ,,,,
+35,Caddy,DD53353,18393,Niina,Mateusz Jan Jaworski ,,,,
+36,Yaris Hybrid,CZ94436,18393,Niina,Brian Søndergaard,,,,
+37,Caddy,DJ88829,Base,Ada ,Alexandru Filon+Luis,,,,
+52,Yaris,CX43859,18393,Niina,Kai Ivan,,,,
+53,Caddy,CZ42892,18633,Magdalena ,Claus Jespersen & Thomas Harder ,,,,
+54,Caddy,CZ42893,18393,JBS,Niina Miu ,,,,
+55,Caddy,CZ42894,18393,Niina,Nuno,,,,
+56,Caddy,CZ42895,Warehouse,Warehouse,Lene ,,,,
+59,Crafter,DB90144,18558,,Rasmus Thunström ,,,,
+61,Crafter,DE81382,18633,Magdalena ,Supervisors/Teamleads 18633 ,,,,
+62,Crafter,DE81380,Base,,Ledig Lystrup,,,,
+63,Crafter,DE81381,Base,,Ledig Lystrup,,,,
+64,Crafter,DE81379,19334,Niclas, Vestas DE 19334,,,,
+65,Crafter,DM93832,Mark,CC/LRM,Mark Andre Jørgensen,,,,
+66,Crafter,DM93833,19334,,Vestas DE 19334,,,,
+67,Crafter,DM93834,Claus,CC/LRM,Claus Bang,,,,
+,,,,,,,,,
+,Total Vans,,,,,,,,
+,Available,,,,,,,,
+,Unavailable,,,,,,,,
+,Maintenance,,,,,,,,
+,Reserved,,,,,,,,

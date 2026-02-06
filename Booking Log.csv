@@ -1,0 +1,9 @@
+Booking ID,Booked By,Van ID,Start Date,End Date,Department,Project ID,Driver,Status
+BK-001,Test Booker,VAN 5,2026-01-28 00:00:00,2026-01-28 00:00:00,Service & Maintenance,Test Project,Test Driver,Confirmed
+BK-002,Rep 1,VAN 5,2026-02-01 09:00:00,2026-02-03 09:00:00,Field Ops,10452,Ravi Kumar,Confirmed
+BK-003,Rep 2,VAN 6,2026-02-02 09:00:00,2026-02-05 09:00:00,Projects,20819,Asha Patel,Confirmed
+BK-004,Rep 3,VAN 12,2026-02-04 09:00:00,2026-02-07 09:00:00,Field Ops,33007,Neha Singh,Requested
+BK-005,Rep 4,VAN 20,2026-02-01 13:00:00,2026-02-01 21:00:00,Delivery,45110,Vikram Rao,Confirmed
+BK-006,Rep 5,VAN 33,2026-02-07 09:00:00,2026-02-09 09:00:00,Projects,59231,Sanjay Iyer,Confirmed
+BK-007,Rep 6,VAN 41,2026-02-11 09:00:00,2026-02-14 09:00:00,Field Ops,77590,Priya Nair,Confirmed
+MAINT-001,,VAN 12,2026-02-18 08:00:00,2026-02-20 18:00:00,,MAINT,,Unavailable
