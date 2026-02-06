@@ -1,14 +1,10 @@
 import Link from 'next/link'
 import { Database, CheckCircle, XCircle } from 'lucide-react'
+import { getBaseUrl } from '@/lib/api'
 
 async function checkDatabase() {
   try {
-    // Use relative URL in production, full URL in development
-    const baseUrl = process.env.VERCEL_URL 
-      ? `https://${process.env.VERCEL_URL}` 
-      : process.env.NEXTAUTH_URL || 'http://localhost:3000'
-    
-    const res = await fetch(`${baseUrl}/api/health`, {
+    const res = await fetch(`${getBaseUrl()}/api/health`, {
       cache: 'no-store',
     })
     const data = await res.json()

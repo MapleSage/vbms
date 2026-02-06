@@ -1,10 +1,11 @@
 import Link from 'next/link'
 import { Car, Calendar, DollarSign, Wrench, AlertCircle } from 'lucide-react'
 import { notFound } from 'next/navigation'
+import { getBaseUrl } from '@/lib/api'
 
 async function getVan(id: string) {
   try {
-    const res = await fetch('http://localhost:3000/api/vans', {
+    const res = await fetch(`${getBaseUrl()}/api/vans`, {
       cache: 'no-store',
     })
     if (!res.ok) return null

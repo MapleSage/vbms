@@ -1,8 +1,9 @@
 import Link from 'next/link'
 import { Plus, Calendar, User, Car } from 'lucide-react'
+import { getBaseUrl } from '@/lib/api'
 
 async function getBookings() {
-  const res = await fetch('http://localhost:3000/api/bookings', {
+  const res = await fetch(`${getBaseUrl()}/api/bookings`, {
     cache: 'no-store',
   })
   if (!res.ok) return []

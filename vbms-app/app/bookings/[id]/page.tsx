@@ -1,10 +1,11 @@
 import Link from 'next/link'
 import { Calendar, Car, User, MapPin, Clock, DollarSign } from 'lucide-react'
 import { notFound } from 'next/navigation'
+import { getBaseUrl } from '@/lib/api'
 
 async function getBooking(id: string) {
   try {
-    const res = await fetch(`http://localhost:3000/api/bookings`, {
+    const res = await fetch(`${getBaseUrl()}/api/bookings`, {
       cache: 'no-store',
     })
     if (!res.ok) return null

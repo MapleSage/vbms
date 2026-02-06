@@ -1,8 +1,9 @@
 import Link from 'next/link'
 import { Car, Calendar } from 'lucide-react'
+import { getBaseUrl } from '@/lib/api'
 
 async function getVans() {
-  const res = await fetch('http://localhost:3000/api/vans', {
+  const res = await fetch(`${getBaseUrl()}/api/vans`, {
     cache: 'no-store',
   })
   if (!res.ok) return []
