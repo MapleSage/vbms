@@ -7,11 +7,24 @@ import Header from '@/components/Header'
 export const revalidate = 10
 
 async function getBookings() {
-  const res = await fetch(`${getBaseUrl()}/api/bookings`, {
-    cache: 'no-store',
-  })
-  if (!res.ok) return []
-  return res.json()
+  try {
+    const baseUrl = getBaseUrl()
+    const url = baseUrl ? `${baseUrl}/api/bookings` : '/api/bookings'
+    
+    const res = await fetch(url, {
+      cache: 'no-store',
+    })
+    
+    if (!res.ok) {
+      console.error('Failed to fetch bookings:', res.status, res.statusText)
+      return []
+    }
+    
+    return res.json()
+  } catch (error) {
+    console.error('Error fetching bookings:', error)
+    return []
+  }
 }
 
 export default async function BookingsPage() {
