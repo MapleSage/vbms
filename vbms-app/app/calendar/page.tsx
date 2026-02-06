@@ -25,16 +25,21 @@ export default function CalendarPage() {
   const [bookings, setBookings] = useState<Booking[]>([])
   const [currentDate, setCurrentDate] = useState(new Date())
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     fetch('/api/bookings')
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to fetch bookings')
+        return res.json()
+      })
       .then((data) => {
         setBookings(data)
         setLoading(false)
       })
       .catch((err) => {
         console.error('Failed to load bookings:', err)
+        setError(err.message)
         setLoading(false)
       })
   }, [])
@@ -106,6 +111,18 @@ export default function CalendarPage() {
           <h1 className="text-3xl font-bold text-gray-900">Booking Calendar</h1>
           <p className="text-gray-600 mt-1">Visual overview of all bookings</p>
         </div>
+
+        {/* Error Message */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+            <div className="flex items-center gap-2 text-red-800">
+              <span className="font-medium">Error loading bookings: {error}</span>
+            </div>
+            <p className="text-sm text-red-600 mt-2">
+              The database may not be set up yet. Please check the deployment guide.
+            </p>
+          </div>
+        )}
 
         {/* Calendar Controls */}
         <div className="bg-white rounded-lg shadow-md mb-6">
