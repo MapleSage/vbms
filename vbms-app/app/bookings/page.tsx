@@ -3,9 +3,11 @@ import { Plus, Calendar, User, Car } from 'lucide-react'
 import { getBaseUrl } from '@/lib/api'
 import Header from '@/components/Header'
 
-// Force dynamic rendering
+// Force dynamic rendering - CRITICAL for Vercel
 export const dynamic = 'force-dynamic'
 export const revalidate = 0
+export const runtime = 'nodejs'
+export const fetchCache = 'force-no-store'
 
 async function getBookings() {
   try {
@@ -16,6 +18,7 @@ async function getBookings() {
     
     const res = await fetch(url, {
       cache: 'no-store',
+      next: { revalidate: 0 },
     })
     
     if (!res.ok) {
