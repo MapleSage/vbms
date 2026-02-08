@@ -1,0 +1,110 @@
+name: Deploy to Azure
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'vbms-app/**'
+      - '.github/workflows/deploy.yml'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: 'vbms-app/package-lock.json'
+
+      - name: Install dependencies
+        working-directory: ./vbms-app
+        run: npm ci
+
+      - name: Generate Prisma Client
+        working-directory: ./vbms-app
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: npx prisma generate
+
+      - name: Build application
+        working-directory: ./vbms-app
+        run: npm run build
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
+          AZURE_AI_ENDPOINT: ${{ secrets.AZURE_AI_ENDPOINT }}
+          AZURE_AI_PROJECT_KEY: ${{ secrets.AZURE_AI_PROJECT_KEY }}
+          AZURE_AI_PROJECT_ID: ${{ secrets.AZURE_AI_PROJECT_ID }}
+          AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Prepare deployment package
+        working-directory: ./vbms-app
+        run: |
+          # Create deployment directory
+          mkdir -p deployment
+          
+          # Copy necessary files
+          cp -r .next deployment/
+          cp -r node_modules deployment/
+          cp -r public deployment/ 2>/dev/null || true
+          cp package.json deployment/
+          cp package-lock.json deployment/
+          cp next.config.js deployment/
+          cp tsconfig.json deployment/ 2>/dev/null || true
+          cp .env.production deployment/.env.production 2>/dev/null || true
+          
+          # Create web.config for IIS (Azure App Service)
+          cat > deployment/web.config << 'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <configuration>
+            <system.webServer>
+              <webSocket enabled="false" />
+              <handlers>
+                <add name="iisnode" path="server.js" verb="*" modules="iisnode"/>
+              </handlers>
+              <rewrite>
+                <rules>
+                  <rule name="NextJS" stopProcessing="true">
+                    <match url="^(.*)$" ignoreCase="false"/>
+                    <conditions logicalGrouping="MatchAll">
+                      <add input="{REQUEST_FILENAME}" matchType="IsFile" ignoreCase="false" negate="true"/>
+                      <add input="{REQUEST_FILENAME}" matchType="IsDirectory" ignoreCase="false" negate="true"/>
+                    </conditions>
+                    <action type="Rewrite" url="server.js"/>
+                  </rule>
+                </rules>
+              </rewrite>
+              <httpErrors>
+                <remove statusCode="404" subStatusCode="-1"/>
+                <error statusCode="404" prefixLanguageFilePath="" path="/404" responseMode="ExecuteURL"/>
+              </httpErrors>
+            </system.webServer>
+          </configuration>
+          EOF
+          
+          # List deployment contents
+          echo "Deployment package contents:"
+          ls -lah deployment/ | head -20
+
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy to Azure App Service
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: vbms-app
+          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
+          package: ./vbms-app/deployment
+
+      - name: Verify deployment
+        run: |
+          echo "Deployment completed successfully!"
+          echo "App URL: https://vbms-app.azurewebsites.net"

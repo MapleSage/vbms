@@ -1,0 +1,58 @@
+name: CI - Build & Test
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'vbms-app/**'
+      - '.github/workflows/ci.yml'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'vbms-app/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: 'vbms-app/package-lock.json'
+
+      - name: Install dependencies
+        working-directory: ./vbms-app
+        run: npm ci
+
+      - name: Run linter
+        working-directory: ./vbms-app
+        run: npm run lint
+        continue-on-error: true
+
+      - name: Build application
+        working-directory: ./vbms-app
+        run: npm run build
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
+          AZURE_AI_ENDPOINT: ${{ secrets.AZURE_AI_ENDPOINT }}
+          AZURE_AI_PROJECT_KEY: ${{ secrets.AZURE_AI_PROJECT_KEY }}
+          AZURE_AI_PROJECT_ID: ${{ secrets.AZURE_AI_PROJECT_ID }}
+          AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Check build output
+        working-directory: ./vbms-app
+        run: |
+          echo "Build artifacts:"
+          ls -lah .next/ 2>/dev/null | head -20 || echo "No .next directory"
+          ls -lah out/ 2>/dev/null || echo "No out directory"
