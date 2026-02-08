@@ -10,8 +10,8 @@ export async function GET(request: NextRequest) {
     const resources = await prisma.resource.findMany({
       where: {
         status: 'ACTIVE',
-        ...(type && { type: { contains: type, mode: 'insensitive' } }),
-        ...(location && { location: { contains: location, mode: 'insensitive' } }),
+        ...(type && { type: { contains: type } }),
+        ...(location && { location: { contains: location } }),
       },
       orderBy: [{ type: 'asc' }, { name: 'asc' }],
     });
