@@ -1,0 +1,1 @@
+{"success":true,"database":{"connected":true,"vans":27,"bookings":7},"environment":{"hasDatabase":true,"hasBlob":true,"nodeEnv":"production"}}
