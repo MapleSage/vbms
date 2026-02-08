@@ -52,6 +52,7 @@ model Booking {
   startDateTime DateTime @map("start_date_time")
   endDateTime   DateTime @map("end_date_time")
   status        String   @default("REQUESTED") // BookingStatus: REQUESTED, CONFIRMED, ACTIVE, COMPLETED, CANCELLED
+  bookingPoc    String?  @map("booking_poc") // Project Leader / Booking POC
   
   createdBy     String   @map("created_by")
   createdAt     DateTime @default(now()) @map("created_at")
@@ -184,6 +185,29 @@ model AuditTrail {
   @@index([timestamp])
   @@map("audit_trail")
 }
+
+// Azure Resources - Cloud infrastructure tracking
+model Resource {
+  id            String   @id @default(cuid())
+  resourceId    String?
+  name          String
+  type          String   // App Service, SQL Database, Container Registry, etc.
+  location      String
+  resourceLink  String?  // Azure Portal link
+  subscription  String?
+  resourceGroup String?
+  status        String   @default("ACTIVE")
+  metadata      String?  // JSON from CSV
+  
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  
+  @@index([type])
+  @@index([location])
+  @@index([status])
+  @@map("resources")
+}
+
 
 // Users - Application users (synced from Azure AD)
 model User {

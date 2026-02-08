@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Calendar, Car, FileText, TrendingUp } from 'lucide-react'
+import { Calendar, Car, FileText, TrendingUp, Cloud, MessageCircle } from 'lucide-react'
 import Header from '@/components/Header'
 
 export default function HomePage() {
@@ -47,16 +47,16 @@ export default function HomePage() {
             href="/vans"
           />
           <FeatureCard
-            icon={<FileText className="w-8 h-8 text-purple-600" />}
-            title="Audit Trail"
-            description="Complete history of all bookings and changes"
-            href="/audit"
+            icon={<Cloud className="w-8 h-8 text-cyan-600" />}
+            title="Azure Resources"
+            description="Monitor your cloud infrastructure and resources"
+            href="/resources"
           />
           <FeatureCard
-            icon={<TrendingUp className="w-8 h-8 text-orange-600" />}
-            title="Reports"
-            description="Utilization and cost reports for better insights"
-            href="/reports"
+            icon={<MessageCircle className="w-8 h-8 text-indigo-600" />}
+            title="AI Assistant"
+            description="Get intelligent answers about bookings and operations"
+            href="/chat"
           />
         </div>
 

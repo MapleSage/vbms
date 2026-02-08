@@ -20,6 +20,7 @@ export default function NewBookingPage() {
     driverContact: '',
     startDateTime: '',
     endDateTime: '',
+    bookingPoc: '',
   })
 
   useEffect(() => {
@@ -253,6 +254,24 @@ export default function NewBookingPage() {
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
+          </div>
+
+          {/* Booking POC */}
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              <div className="flex items-center gap-2">
+                <User className="w-4 h-4" />
+                Project Leader / Booking POC (Optional)
+              </div>
+            </label>
+            <input
+              type="text"
+              name="bookingPoc"
+              value={formData.bookingPoc}
+              onChange={handleChange}
+              placeholder="Name of project leader who initiated booking"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
           </div>
 
           {/* Submit Buttons */}
